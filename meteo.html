@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Meteo Live</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #83a4d4, #b6fbff);
+        text-align: center;
+        padding: 50px;
+      }
+      input,
+      button {
+        padding: 10px;
+        font-size: 16px;
+        margin: 10px;
+      }
+      #meteo {
+        margin-top: 30px;
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🌤️ Meteo Live</h1>
+    <input type="text" id="citta" placeholder="Inserisci città" />
+    <button onclick="caricaMeteo()">Cerca</button>
+
+    <div id="meteo"></div>
+
+    <script>
+      async function caricaMeteo() {
+        const citta = document.getElementById("citta").value;
+        const apiKey = "cfd30fb4da248d8614f3f996979db186";
+
+        if (!citta) {
+          alert("Inserisci una città!");
+          return;
+        }
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${citta}&appid=${apiKey}&units=metric&lang=it`;
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error("Errore nella richiesta");
+
+          const data = await response.json();
+          const nome = data.name;
+          const descrizione = data.weather[0].description;
+          const temperatura = data.main.temp;
+          const umidita = data.main.humidity;
+
+          document.getElementById("meteo").innerHTML = `
+          <h2>${nome}</h2>
+          <p>☁️ Meteo: ${descrizione}</p>
+          <p>🌡️ Temperatura: ${temperatura} °C</p>
+          <p>💧 Umidità: ${umidita}%</p>
+        `;
+        } catch (error) {
+          document.getElementById(
+            "meteo"
+          ).innerHTML = `<p>Errore nel recupero del meteo.</p>`;
+        }
+        document.getElementById("citta").value = "";
+      }
+    </script>
+  </body>
+</html>
